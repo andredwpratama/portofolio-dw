@@ -6,26 +6,45 @@ import { useGSAP } from "@gsap/react";
 
 export default function PageTransition() {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(() => {
     if (!overlayRef.current) return;
 
-    // Initial scale is 1 (covering full screen)
-    // Wipe to top by scaling Y to 0
-    gsap.to(overlayRef.current, {
+    const tl = gsap.timeline();
+
+    // Text bounces in first
+    if (textRef.current) {
+      tl.from(textRef.current, {
+        scale: 0,
+        rotate: -20,
+        duration: 0.4,
+        ease: "back.out(3)",
+      });
+    }
+
+    // Then the overlay wipes away
+    tl.to(overlayRef.current, {
       scaleY: 0,
-      duration: 1,
+      duration: 0.8,
       ease: "expo.inOut",
       transformOrigin: "top",
-      delay: 0.2, // Small delay for browser to settle
+      delay: 0.3,
     });
   }, []);
 
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 bg-accent z-[9999] pointer-events-none"
+      className="fixed inset-0 bg-primary-container z-[9999] pointer-events-none flex items-center justify-center"
       style={{ transform: "scaleY(1)" }}
-    />
+    >
+      <span
+        ref={textRef}
+        className="font-display text-headline-lg uppercase text-on-surface opacity-30 select-none"
+      >
+        ⚡
+      </span>
+    </div>
   );
 }

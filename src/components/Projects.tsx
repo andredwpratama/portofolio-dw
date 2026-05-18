@@ -1,7 +1,6 @@
 "use client";
 
 import { PROJECTS } from "@/lib/constants";
-import { ExternalLink, Github } from "lucide-react";
 import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -20,45 +19,50 @@ export default function Projects() {
     () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      // Header Reveal
+      // Header — playful slide up with bounce
       gsap.from(".projects-header > *", {
         opacity: 0,
-        y: 40,
-        stagger: 0.2,
+        y: 60,
+        rotate: -2,
+        stagger: 0.15,
         duration: 1,
-        ease: "power3.out",
+        ease: "back.out(1.7)",
         scrollTrigger: {
           trigger: ".projects-header",
           start: "top 85%",
         },
       });
 
-      // Cards Stagger Reveal with Scale
-      gsap.from(".project-card", {
-        opacity: 0,
-        y: 100,
-        scale: 0.95,
-        stagger: 0.1,
-        duration: 1.2,
-        ease: "power4.out",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 80%",
-        },
-      });
-
-      // Tilt-like effect on scroll for cards
-      gsap.utils.toArray(".project-card").forEach((card: any, i) => {
-        gsap.to(card, {
-          y: i % 2 === 0 ? -40 : -80,
-          ease: "none",
+      // Cards — alternating entrance directions with bounce
+      const cards = containerRef.current?.querySelectorAll(".project-card");
+      cards?.forEach((card, i) => {
+        const isEven = i % 2 === 0;
+        gsap.from(card, {
+          opacity: 0,
+          x: isEven ? -80 : 80,
+          y: 40,
+          rotate: isEven ? -4 : 4,
+          scale: 0.9,
+          duration: 1,
+          ease: "back.out(1.4)",
           scrollTrigger: {
             trigger: card,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
+            start: "top 88%",
           },
         });
+      });
+
+      // Tech tags pop in per card
+      gsap.from(".tech-tag", {
+        opacity: 0,
+        scale: 0,
+        stagger: 0.02,
+        duration: 0.4,
+        ease: "back.out(3)",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 70%",
+        },
       });
     },
     { scope: sectionRef }
@@ -68,98 +72,107 @@ export default function Projects() {
     <section
       id="projects"
       ref={sectionRef}
-      className="w-full py-40 px-6 md:px-12 bg-background relative overflow-hidden"
+      className="w-full px-gutter max-w-[1440px] mx-auto py-xl"
     >
-      <div className="max-w-7xl mx-auto">
-        <div className="projects-header mb-24 space-y-6 text-right flex flex-col items-end">
-          <h2 className="text-5xl md:text-8xl font-bold font-display tracking-tighter leading-none">
-            Selected <span className="text-accent italic">Projects</span>
+      {/* Header */}
+      <div className="projects-header mb-xl">
+        <div className="md:max-w-[66%]">
+          <h2 className="font-display text-headline-lg-mobile md:text-headline-lg uppercase text-on-surface mb-sm">
+            PROJECT{" "}
+            <span className="bg-primary-container px-base inline-block">
+              GALLERY
+            </span>
           </h2>
-          <p className="text-text-secondary max-w-xl text-lg md:text-xl font-medium">
-            Merging technical performance with intuitive design. 
-            Each project is a deep dive into scalable architecture.
+          <p className="font-body text-body-lg text-on-surface max-w-2xl bg-surface-container-highest p-sm neu-border-thin neu-shadow inline-block">
+            A collection of high-impact technical solutions. Built with raw
+            power, structural integrity, and uncompromising logic.
           </p>
         </div>
+      </div>
 
-        <div 
-          ref={containerRef}
-          className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20"
-        >
-          {PROJECTS.map((project, idx) => (
-            <div
-              key={idx}
-              className="project-card group bg-surface/50 backdrop-blur-sm border border-border/50 rounded-2xl overflow-hidden flex flex-col h-full transition-colors hover:border-accent/40"
-            >
-              <div className="aspect-[16/10] bg-[#1a1a24] relative overflow-hidden">
-                {project.image ? (
-                  <div className="project-image w-full h-full relative transition-transform duration-700 ease-out group-hover:scale-110">
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="project-image absolute inset-0 flex items-center justify-center text-border font-display text-7xl font-bold uppercase tracking-tighter opacity-10">
-                    {project.title.split(" ")[0]}
-                  </div>
-                )}
-                
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      {/* Projects Grid */}
+      <div
+        ref={containerRef}
+        className="grid grid-cols-1 md:grid-cols-2 gap-lg md:gap-gutter items-start"
+      >
+        {PROJECTS.map((project, idx) => (
+          <article
+            key={idx}
+            className={`project-card neu-card-hover ${project.color} neu-border neu-shadow-lg flex flex-col h-full relative group ${
+              idx === 1 ? "md:mt-lg" : ""
+            }`}
+          >
+            {/* Decorative top bar */}
+            <div className="h-sm border-b-4 border-on-surface bg-surface-container-highest flex items-center px-base gap-xs">
+              <div className="w-3 h-3 bg-on-surface rounded-full" />
+              <div className="w-3 h-3 bg-on-surface rounded-full" />
+            </div>
+
+            {/* Image */}
+            {project.image && (
+              <div className="relative w-full aspect-[16/10] border-b-4 border-on-surface overflow-hidden">
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+            )}
+
+            {/* Content */}
+            <div className="p-md flex-grow flex flex-col z-10">
+              <h3 className="font-display text-headline-md text-on-surface mb-sm border-b-4 border-on-surface pb-xs uppercase">
+                {project.title}
+              </h3>
+              <p className="font-body text-body-md text-on-surface mb-md flex-grow">
+                {project.description}
+              </p>
+
+              {/* Tech Tags */}
+              <div className="flex flex-wrap gap-xs mb-lg">
+                {project.tech.map((t) => (
+                  <span
+                    key={t}
+                    className="tech-tag tag-hover bg-primary-container text-on-primary-container neu-border-thin px-base py-xs font-display text-label-md uppercase"
+                  >
+                    {t}
+                  </span>
+                ))}
               </div>
 
-              <div className="p-10 flex flex-col flex-grow">
-                <div className="flex flex-wrap gap-3 mb-8">
-                  {project.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="text-[10px] uppercase tracking-[0.2em] font-black text-accent bg-accent/10 px-3 py-1.5 rounded-full"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                <h3 className="text-3xl font-bold mb-4 group-hover:text-accent transition-colors duration-300">
-                  {project.title}
-                </h3>
-                <p className="text-text-secondary mb-12 text-lg leading-relaxed flex-grow">
-                  {project.description}
-                </p>
-
-                <div className="flex gap-10 items-center mt-auto">
+              {/* Action Buttons */}
+              <div className="flex gap-sm">
+                {project.demo && (
                   <a
-                    href={project.github}
+                    href={project.demo}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2.5 text-sm font-black uppercase tracking-widest hover:text-accent transition-all group/link"
+                    className="flex-1 neu-btn bg-surface text-on-surface px-sm py-base font-display text-label-xl uppercase text-center flex justify-center items-center gap-xs"
                   >
-                    <Github className="w-5 h-5 transition-transform group-hover/link:-translate-y-1" />
-                    <span className="relative">
-                      Repo
-                      <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent transition-all duration-300 group-hover/link:w-full" />
+                    Launch{" "}
+                    <span className="material-symbols-outlined">
+                      arrow_forward
                     </span>
                   </a>
-                  {project.demo && (
-                    <a
-                      href={project.demo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2.5 text-sm font-black uppercase tracking-widest hover:text-accent transition-all group/link"
-                    >
-                      <ExternalLink className="w-5 h-5 transition-transform group-hover/link:-translate-y-1" />
-                      <span className="relative">
-                        Launch
-                        <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent transition-all duration-300 group-hover/link:w-full" />
-                      </span>
-                    </a>
-                  )}
-                </div>
+                )}
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="neu-btn bg-surface-container-highest text-on-surface px-sm py-base font-display text-label-md uppercase text-center flex justify-center items-center gap-xs"
+                >
+                  <span className="material-symbols-outlined">code</span>
+                </a>
               </div>
             </div>
-          ))}
-        </div>
+
+            {/* Large background number */}
+            <div className="absolute bottom-4 right-4 font-display text-[120px] leading-none opacity-10 text-on-surface pointer-events-none font-black select-none z-0">
+              {String(idx + 1).padStart(2, "0")}
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   );

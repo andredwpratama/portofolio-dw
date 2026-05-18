@@ -10,6 +10,38 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Color assignments per category for the neubrutalist feel
+const CATEGORY_STYLES: Record<
+  string,
+  { bg: string; barColor: string; icon: string }
+> = {
+  frontend: {
+    bg: "bg-surface",
+    barColor: "bg-primary-container",
+    icon: "web",
+  },
+  backend: {
+    bg: "bg-surface",
+    barColor: "bg-tertiary-container",
+    icon: "dns",
+  },
+  database: {
+    bg: "bg-surface",
+    barColor: "bg-secondary-fixed",
+    icon: "database",
+  },
+  ai: {
+    bg: "bg-surface",
+    barColor: "bg-tertiary-fixed",
+    icon: "smart_toy",
+  },
+  tools: {
+    bg: "bg-surface",
+    barColor: "bg-on-surface",
+    icon: "handyman",
+  },
+};
+
 export default function TechStack() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -17,58 +49,81 @@ export default function TechStack() {
     () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      // Title Reveal
-      gsap.from(".stack-title", {
+      // Header — drops in with playful bounce
+      gsap.from(".skills-header", {
         opacity: 0,
-        y: 30,
+        y: -60,
+        rotate: 3,
         duration: 1,
-        ease: "power3.out",
+        ease: "elastic.out(1, 0.6)",
         scrollTrigger: {
-          trigger: ".stack-title",
-          start: "top 90%",
+          trigger: ".skills-header",
+          start: "top 88%",
         },
       });
 
-      // Staggered reveal for columns
-      gsap.from(".stack-column", {
-        opacity: 0,
-        y: 50,
-        stagger: 0.1,
-        duration: 1.2,
-        ease: "power4.out",
-        scrollTrigger: {
-          trigger: ".stack-grid",
-          start: "top 80%",
-        },
+      // Columns slam in from different angles
+      const columns = sectionRef.current?.querySelectorAll(".skill-column");
+      columns?.forEach((col, i) => {
+        const directions = [
+          { x: -100, rotate: -5 },
+          { y: 80, rotate: 2 },
+          { x: 100, rotate: 5 },
+          { x: -60, rotate: -3 },
+          { y: 60, rotate: 3 },
+        ];
+        const dir = directions[i % directions.length];
+        gsap.from(col, {
+          opacity: 0,
+          ...dir,
+          scale: 0.85,
+          duration: 0.9,
+          ease: "back.out(1.7)",
+          scrollTrigger: {
+            trigger: col,
+            start: "top 88%",
+          },
+        });
       });
 
-      // Individual items hover-like entrance
-      gsap.from(".stack-item", {
+      // Skill items bounce in
+      gsap.from(".skill-item", {
         opacity: 0,
-        scale: 0.9,
-        x: -10,
-        stagger: 0.02,
-        duration: 0.8,
-        ease: "back.out(1.7)",
+        x: -20,
+        scale: 0.8,
+        stagger: 0.03,
+        duration: 0.5,
+        ease: "back.out(2.5)",
         scrollTrigger: {
-          trigger: ".stack-grid",
+          trigger: ".skills-grid",
           start: "top 75%",
         },
       });
 
-      // Progress bar fill
+      // Progress bar fill — elastic ease for playful feel
       const bars = sectionRef.current?.querySelectorAll(".progress-fill");
-      bars?.forEach((bar) => {
+      bars?.forEach((bar, i) => {
         const targetWidth = (bar as HTMLElement).dataset.proficiency;
         gsap.to(bar, {
           width: targetWidth + "%",
-          duration: 1.5,
-          ease: "expo.out",
+          duration: 1.8,
+          ease: "elastic.out(1, 0.5)",
+          delay: i * 0.04,
           scrollTrigger: {
             trigger: bar,
-            start: "top 90%",
+            start: "top 92%",
           },
         });
+      });
+
+      // Category icons pulse continuously
+      gsap.to(".category-icon", {
+        scale: 1.15,
+        duration: 1.5,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        stagger: 0.3,
       });
     },
     { scope: sectionRef }
@@ -76,61 +131,67 @@ export default function TechStack() {
 
   return (
     <section
-      id="stack"
+      id="skills"
       ref={sectionRef}
-      className="w-full py-40 px-6 md:px-12 bg-surface/30 relative overflow-hidden"
+      className="w-full px-gutter max-w-[1440px] mx-auto py-xl"
     >
-      <div className="max-w-7xl mx-auto">
-        <div className="stack-title mb-24 space-y-6 text-right flex flex-col items-end">
-          <h2 className="text-5xl md:text-8xl font-bold font-display tracking-tighter leading-none">
-            Technical <span className="text-accent italic">Arsenal</span>
+      {/* Header */}
+      <div className="skills-header mb-xl">
+        <div className="neu-border bg-tertiary-container neu-shadow-lg p-md inline-block">
+          <h2 className="font-display text-headline-lg-mobile md:text-headline-lg uppercase text-on-surface mb-sm">
+            Arsenal
           </h2>
-          <p className="text-text-secondary max-w-xl text-lg md:text-xl font-medium">
-            A curated list of technologies I leverage to build 
-            future-proof digital solutions.
+          <p className="font-body text-body-lg max-w-2xl border-l-4 border-on-surface pl-sm bg-surface-container p-sm neu-shadow">
+            The tools, languages, and frameworks I use to bend the digital world
+            to my will. Constantly evolving. Always building.
           </p>
-        </div>
-
-        <div className="stack-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-24 md:gap-x-24">
-          {Object.entries(TECH_STACK).map(([category, items]) => (
-            <div key={category} className="stack-column space-y-12">
-              <h3 className="text-xs font-black uppercase tracking-[0.4em] text-accent/50 flex items-center gap-4 capitalize">
-                <span className="w-12 h-[1px] bg-accent/20" />
-                {category}
-              </h3>
-              <div className="space-y-10">
-                {items.map((tech) => (
-                  <div key={tech.name} className="stack-item group cursor-default">
-                    <div className="flex justify-between mb-4 text-sm font-black uppercase tracking-widest">
-                      <span className="group-hover:text-accent transition-colors duration-300">{tech.name}</span>
-                      <span className="text-text-secondary group-hover:text-accent transition-colors duration-300">
-                        {tech.proficiency}%
-                      </span>
-                    </div>
-                    <div className="h-[2px] bg-border/50 w-full overflow-hidden">
-                      <div
-                        className="progress-fill h-full bg-accent relative group-hover:shadow-[0_0_15px_rgba(125,211,252,0.8)] transition-shadow"
-                        data-proficiency={tech.proficiency}
-                        style={{ width: '0%' }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 
-      <style jsx global>{`
-        @keyframes shimmer {
-          100% {
-            transform: translateX(100%);
-          }
-        }
-      `}</style>
+      {/* Skills Grid */}
+      <div className="skills-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter">
+        {Object.entries(TECH_STACK).map(([category, items]) => {
+          const style = CATEGORY_STYLES[category] || CATEGORY_STYLES.tools;
+          return (
+            <div key={category} className="skill-column">
+              <div className={`${style.bg} neu-border neu-shadow-lg p-md neu-card-hover`}>
+                {/* Category Header */}
+                <div className="border-b-4 border-on-surface pb-sm mb-md flex items-center justify-between">
+                  <h3 className="font-display text-headline-sm uppercase text-on-surface capitalize">
+                    {category}
+                  </h3>
+                  <span
+                    className="category-icon material-symbols-outlined text-3xl"
+                    style={{ fontVariationSettings: "'FILL' 1" }}
+                  >
+                    {style.icon}
+                  </span>
+                </div>
+
+                {/* Skill Items with Progress Bars */}
+                <div className="space-y-md">
+                  {items.map((tech) => (
+                    <div key={tech.name} className="skill-item group cursor-default">
+                      <div className="mb-xs">
+                        <span className="font-display text-label-xl uppercase text-on-surface group-hover:text-tertiary group-hover:translate-x-1 transition-all duration-200 inline-block">
+                          {tech.name}
+                        </span>
+                      </div>
+                      <div className="h-3 bg-surface-container-highest neu-border-thin w-full overflow-hidden">
+                        <div
+                          className={`progress-fill h-full ${style.barColor} relative transition-shadow group-hover:shadow-[0_0_8px_rgba(0,0,0,0.3)]`}
+                          data-proficiency={tech.proficiency}
+                          style={{ width: "0%" }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 }
