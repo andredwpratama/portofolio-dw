@@ -86,9 +86,24 @@ export const TECH_STACK = {
 
 export const EXPERIENCE = [
   {
+    role: "Jr AI Engineer",
+    company: "KPI Media",
+    period: "Jul 2026 - PRESENT",
+    description: [
+      "Built KPI Meet, an internal meeting platform on Cloudflare Workers + D1, and led its company-wide rollout with a staff handbook.",
+      "Migrated the company job portal (jobs.kpimedia.co) from Base44 to self-hosted Supabase with a Cloudflare Pages frontend, moving every application and file with verified integrity.",
+      "Built a revenue pivot for Cyclops, the internal client-ops dashboard, backfilling Xero invoice data into D1 with client tiering.",
+      "Designed an AI comment-seeding pipeline in n8n, with Reddit/Quora sourcing lanes and LLM scoring and drafting modules.",
+      "Automated internal ops workflows on Cloudflare (Workers, D1, R2), integrating Google Workspace, Xero and Resend.",
+    ],
+    tech: ["Cloudflare Workers", "D1", "Supabase", "n8n", "LLM", "TypeScript"],
+    cardColor: "bg-primary-container",
+    nodeColor: "bg-secondary-fixed",
+  },
+  {
     role: "Full Stack Developer",
     company: "Enviromate Technology International",
-    period: "Oct 2025 - PRESENT",
+    period: "Oct 2025 - Jul 2026",
     description: [
       "Developed and shipped fullstack features (Angular + Node.js/Express) in production, improving user flow efficiency by ±30% and reducing drop-off across key flows.",
       "Integrated Midtrans Payment Gateway for membership system — including webhook handling and automated notifications — achieving ±95% transaction success rate.",
