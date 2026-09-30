@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Image from "next/image";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -30,12 +29,13 @@ export default function Hero() {
       });
 
       // Highlight box pops in
-      tl.from(
+      tl.fromTo(
         ".hero-highlight",
+        { opacity: 0, scale: 0, rotate: 6 },
         {
-          opacity: 0,
-          scale: 0,
-          rotate: 6,
+          opacity: 1,
+          scale: 1,
+          rotate: 0,
           duration: 0.6,
           ease: "back.out(3)",
         },
@@ -56,12 +56,13 @@ export default function Hero() {
       );
 
       // Buttons pop in with staggered bounce
-      tl.from(
+      tl.fromTo(
         ".hero-btn",
+        { opacity: 0, scale: 0, rotation: -10 },
         {
-          opacity: 0,
-          scale: 0,
-          rotation: -10,
+          opacity: 1,
+          scale: 1,
+          rotation: 0,
           stagger: 0.12,
           duration: 0.6,
           ease: "back.out(3)",
@@ -83,12 +84,13 @@ export default function Hero() {
       );
 
       // Badge bounces in
-      tl.from(
+      tl.fromTo(
         ".hero-badge",
+        { opacity: 0, scale: 0, rotation: 20 },
         {
-          opacity: 0,
-          scale: 0,
-          rotation: 20,
+          opacity: 1,
+          scale: 1,
+          rotation: 6,
           duration: 0.8,
           ease: "elastic.out(1.2, 0.4)",
         },
@@ -186,12 +188,12 @@ export default function Hero() {
             ⚡ Open to Work
           </div>
           <div className="hero-image-wrapper w-full aspect-square bg-surface neu-border neu-shadow-lg overflow-hidden relative">
-            <Image
+            <img
               src="/projects/hero.png"
               alt="Developer Setup"
-              fill
-              className="object-cover opacity-100 contrast-125"
-              priority
+              className="absolute inset-0 w-full h-full object-cover opacity-100 contrast-125"
+              fetchPriority="high"
+              decoding="async"
             />
             <div className="absolute inset-0 neu-border pointer-events-none" />
           </div>

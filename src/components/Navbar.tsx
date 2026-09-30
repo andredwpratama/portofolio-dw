@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { NAV_LINKS } from "@/lib/constants";
 import { useEffect, useState } from "react";
 
@@ -39,13 +38,13 @@ export default function Navbar({ activeSection }: NavbarProps) {
     <nav className="sticky top-0 z-50 bg-background border-b-4 border-on-surface neu-shadow w-full">
       <div className="flex justify-between items-center w-full px-gutter py-sm max-w-[1440px] mx-auto">
         {/* Logo */}
-        <Link
+        <a
           href="#hero"
           onClick={(e) => handleNavClick(e, "#hero")}
           className="font-display text-headline-sm font-black uppercase text-on-surface tracking-tighter hover:text-tertiary transition-colors"
         >
           [ADP-DEV]
-        </Link>
+        </a>
 
         {/* Desktop Nav Links */}
         <div className="hidden md:flex items-center gap-md">

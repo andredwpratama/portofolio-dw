@@ -11,6 +11,8 @@ export default function PageTransition() {
   useGSAP(() => {
     if (!overlayRef.current) return;
 
+    // Show the overlay only once JavaScript runs; static HTML stays readable.
+    gsap.set(overlayRef.current, { scaleY: 1 });
     const tl = gsap.timeline();
 
     // Text bounces in first
@@ -37,7 +39,7 @@ export default function PageTransition() {
     <div
       ref={overlayRef}
       className="fixed inset-0 bg-primary-container z-[9999] pointer-events-none flex items-center justify-center"
-      style={{ transform: "scaleY(1)" }}
+      style={{ transform: "scaleY(0)" }}
     >
       <span
         ref={textRef}

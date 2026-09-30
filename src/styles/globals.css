@@ -3,6 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --font-montserrat: "Montserrat";
+    --font-jetbrains: "JetBrains Mono";
+  }
+
+  /* Hydration must not change the portfolio's flex layout. */
+  astro-island {
+    display: contents;
+  }
+
   body {
     @apply bg-background text-on-surface font-body antialiased;
     background-image: radial-gradient(#1b1b1b 1px, transparent 1px);
